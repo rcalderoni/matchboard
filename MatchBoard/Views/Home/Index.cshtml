@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Match Board</h1>
+    <p class="lead">...</p>
+</div>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#createPlayer').on('click', function () {
+
+                $.post("/players/new",
+                    {
+                        name: $('#playerName').val()
+                    }).success(function (data) {
+                        console.log(data);
+                    }).error(function (data) {
+                        console.log(data);
+                    });
+
+            });
+
+            $('#createMatch').on('click', function () {
+
+                $.get("/games/new/" + $('#homePlayer').val() + "/vs/" + $('#awayPlayer').val()).success(function (data) {
+                        console.log(data);
+                    }).error(function (data) {
+                        console.log(data);
+                    });
+
+            });
+
+            $('#completeMatch').on('click', function () {
+                
+                var homePlayer = {};
+                var awayPlayer = {};
+                var match = {};
+
+                $.get("/player/" + $('#homePlayer').val()).success(function (data) {
+                    console.log(data);
+
+                    homePlayer = data;
+
+                    $.get("/player/" + $('#awayPlayer').val()).success(function (data) {
+                        console.log(data);
+
+                        awayPlayer = data;
+
+                        $.post("/games/submit/",
+                            {
+                                home: { player: homePlayer, score: $('#homeScore').val() },
+                                away: { player: awayPlayer, score: $('#awayScore').val() }
+                            }).success(function (data) {
+                                console.log(data);
+                            }).error(function (data) {
+                                console.log(data);
+                            });
+
+
+                    }).error(function (data) {
+                        console.log(data);
+                    });
+
+
+
+
+                }).error(function (data) {
+                    console.log(data);
+                });
+
+                
+
+            });
+
+        });
+</script>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Create Player</h2>
+        <p>
+            <label for="playerName">Name</label>
+            <input id="playerName" />
+            <input type="button" value="Create" id="createPlayer" />
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2>Create Match</h2>
+        <p>
+            <label for="homePlayer">Player 1</label>
+            <input id="homePlayer" />
+        </p>
+        <p>
+            <label for="awayPlayer">Player 2</label>
+            <input id="awayPlayer" />
+        </p>
+        <p>
+            <input type="button" value="Create" id="createMatch" />
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2>Complete Match</h2>
+        <p>
+            <label for="homeScore">Player 1 Score</label>
+            <input id="homeScore" />
+        </p>
+        <p>
+            <label for="awayScore">Player 2 Score</label>
+            <input id="awayScore" />
+        </p>
+        <p>
+            <input type="button" value="Create" id="completeMatch" />
+        </p>
+    </div>
+</div>
